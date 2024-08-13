@@ -36,7 +36,6 @@ class Migration(migrations.Migration):
                     ],
                 ),
                 ],
-           # Table already exists. See catalog/migrations/0003_delete_product.py
             database_operations=[],
         ),
     ]
