@@ -8,3 +8,7 @@ urlpatterns = [
     path('lettings/', include('lettings.urls', namespace='lettings')),
     path('profiles/', include('profiles.urls', namespace='profiles')),
 ]
+
+# Custom error handlers
+handler404 = 'oc_lettings_site.views.custom_404_view'
+handler500 = 'oc_lettings_site.views.custom_500_view'
