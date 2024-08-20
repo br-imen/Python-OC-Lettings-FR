@@ -1,5 +1,7 @@
 from django.shortcuts import render
 
+from oc_lettings_site.settings import LOGGER
+
 
 # Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 # Quisque molestie quam lobortis leo consectetur ullamcorper non
@@ -33,6 +35,7 @@ def custom_404_view(request, exception):
     Returns:
         HttpResponse: The rendered 404_error.html template with a 404 status code.
     """
+    LOGGER.error(exception)
     return render(request, "404_error.html", status=404)
 
 
