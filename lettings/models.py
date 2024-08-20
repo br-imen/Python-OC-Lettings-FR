@@ -8,6 +8,7 @@ class Address(models.Model):
     Represents an address with a number, street, city,
     state, zip code, and country ISO code.
     """
+
     number = models.PositiveIntegerField(validators=[MaxValueValidator(9999)])
     street = models.CharField(max_length=64)
     city = models.CharField(max_length=64)
@@ -19,6 +20,7 @@ class Address(models.Model):
         """
         This class contains metadata options for the Address model.
         """
+
         verbose_name_plural = "Addresses"  # Correct pluralization here
 
     def __str__(self):
@@ -29,7 +31,7 @@ class Address(models.Model):
         Returns:
         str: The string representation of the object.
         """
-        return f'{self.number} {self.street}'
+        return f"{self.number} {self.street}"
 
 
 class Letting(models.Model):
@@ -39,6 +41,7 @@ class Letting(models.Model):
         title (str): The title of the letting.
         address (Address): The address of the letting.
     """
+
     title = models.CharField(max_length=256)
     address = models.OneToOneField(Address, on_delete=models.CASCADE)
 

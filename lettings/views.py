@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from .models import Letting
 
 
@@ -18,8 +18,8 @@ def index(request):
         A rendered HTML response containing the index page with the lettings list.
     """
     lettings_list = Letting.objects.all()
-    context = {'lettings_list': lettings_list}
-    return render(request, 'lettings/index.html', context)
+    context = {"lettings_list": lettings_list}
+    return render(request, "lettings/index.html", context)
 
 
 # Cras ultricies dignissim purus, vitae hendrerit ex varius non.
@@ -47,9 +47,10 @@ def letting(request, letting_id):
     Returns:
         HttpResponse: The HTTP response object containing the rendered letting template.
     """
-    letting = Letting.objects.get(id=letting_id)
+    # Use get_object_or_404 to handle the DoesNotExist exception
+    letting = get_object_or_404(Letting, id=letting_id)
     context = {
-        'title': letting.title,
-        'address': letting.address,
+        "title": letting.title,
+        "address": letting.address,
     }
-    return render(request, 'lettings/letting.html', context)
+    return render(request, "lettings/letting.html", context)

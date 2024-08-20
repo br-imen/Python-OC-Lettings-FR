@@ -19,7 +19,7 @@ def index(request):
     Returns:
     - The rendered index.html template.
     """
-    return render(request, 'index.html')
+    return render(request, "index.html")
 
 
 def custom_404_view(request, exception):
@@ -33,7 +33,7 @@ def custom_404_view(request, exception):
     Returns:
         HttpResponse: The rendered 404_error.html template with a 404 status code.
     """
-    return render(request, '404_error.html', status=404)
+    return render(request, "404_error.html", status=404)
 
 
 def custom_500_view(request):
@@ -46,4 +46,4 @@ def custom_500_view(request):
     Returns:
         HttpResponse: The rendered 500_error.html template with a status code of 500.
     """
-    return render(request, '500_error.html', status=500)
+    return render(request, "500_error.html", status=500)
