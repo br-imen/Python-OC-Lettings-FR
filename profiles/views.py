@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from .models import Profile
 
 
@@ -16,8 +16,8 @@ def index(request):
         HttpResponse: The HTTP response object.
     """
     profiles_list = Profile.objects.all()
-    context = {'profiles_list': profiles_list}
-    return render(request, 'profiles/index.html', context)
+    context = {"profiles_list": profiles_list}
+    return render(request, "profiles/index.html", context)
 
 
 # Aliquam sed metus eget nisi tincidunt ornare accumsan eget lac
@@ -35,6 +35,6 @@ def profile(request, username):
     Returns:
         HttpResponse: The HTTP response object containing the rendered profile template.
     """
-    profile = Profile.objects.get(user__username=username)
-    context = {'profile': profile}
-    return render(request, 'profiles/profile.html', context)
+    profile = get_object_or_404(Profile, user__username=username)
+    context = {"profile": profile}
+    return render(request, "profiles/profile.html", context)
