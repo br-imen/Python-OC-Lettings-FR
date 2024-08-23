@@ -58,10 +58,10 @@ jobs:
         run: |
           docker build \
           --build-arg SENTRY_DSN=${{ secrets.SENTRY_DSN }} \
-          --build-arg SECRET_KEY=${{ secrets.SECRET_KEY }} \
+          --build-arg SECRET_KEY="${{ secrets.SECRET_KEY }}" \
           --build-arg DEBUG=${{ vars.DEBUG }} \
-          --build-arg ALLOWED_HOSTS="${{ vars.ALLOWED_HOSTS }}" \
-          -t "oc_lettings_site:${{ github.sha }}" .
+          --build-arg ALLOWED_HOSTS=${{ vars.ALLOWED_HOSTS }} \
+          -t oc_lettings_site:${{ github.sha }} .
       
       - name: Push Docker image to Docker Hub
         run: docker push oc_lettings_site:${{ github.sha }}
