@@ -55,10 +55,16 @@ jobs:
         run: echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
       
       - name: Build Docker image
-        run: docker build -t myapp:${{ github.sha }} .
+        run: |
+          docker build \
+          --build-arg SENTRY_DSN=${{ secrets.SENTRY_DSN }} \
+          --build-arg SECRET_KEY=${{ secrets.SECRET_KEY }} \
+          --build-arg DEBUG=${{ vars.DEBUG }} \
+          --build-arg ALLOWED_HOSTS="${{ vars.ALLOWED_HOSTS }}" \
+          -t oc_lettings_site:${{ github.sha }} .
       
       - name: Push Docker image to Docker Hub
-        run: docker push myapp:${{ github.sha }}
+        run: docker push oc_lettings_site:${{ github.sha }}
         
   deploy:
     runs-on: ubuntu-latest
@@ -75,4 +81,4 @@ jobs:
         
       - name: Deploy to Render
         run: |
-          render services update myapp --docker-image myapp:${{ github.sha }}
+          render services update oc_lettings_site --docker-image oc_lettings_site:${{ github.sha }}

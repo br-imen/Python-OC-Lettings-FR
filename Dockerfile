@@ -1,9 +1,6 @@
 # Use the official Python image as the base image
 FROM python:3.11-slim
 
-# Install bash
-RUN apt-get update && apt-get install -y bash
-
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
@@ -19,8 +16,17 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the entire Django project to the container
 COPY . /app/
-COPY .env /app/.env
 
+# Accept build arguments and set them as environment variables
+ARG SENTRY_DSN
+ARG SECRET_KEY
+ARG DEBUG
+ARG ALLOWED_HOSTS
+
+ENV SENTRY_DSN=$SENTRY_DSN
+ENV SECRET_KEY=$SECRET_KEY
+ENV DEBUG=$DEBUG
+ENV ALLOWED_HOSTS=$ALLOWED_HOSTS
 
 # Collect static files
 RUN python manage.py collectstatic --noinput
@@ -29,5 +35,4 @@ RUN python manage.py collectstatic --noinput
 EXPOSE 8000
 
 # Command to run the Django development server
-CMD ["bash", "-c", "source /app/.env && python manage.py runserver 0.0.0.0:8000"]
-
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
