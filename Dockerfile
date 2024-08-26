@@ -35,4 +35,4 @@ RUN python manage.py collectstatic --noinput
 EXPOSE 8000
 
 # Command to run the application using Gunicorn
-CMD ["gunicorn", "--bind", "0.0.0.0:$PORT", "oc_lettings_site.wsgi:application"]
+CMD exec gunicorn --bind "0.0.0.0:$PORT" oc_lettings_site.wsgi:application
