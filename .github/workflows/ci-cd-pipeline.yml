@@ -74,34 +74,56 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Install curl and jq
-        run: sudo apt-get install -y curl jq
-
-      - name: Get Render Service ID
-        id: get_service_id
+      - name: Install Heroku CLI
         run: |
-          SERVICE_ID=$(curl -s -X GET "https://api.render.com/v1/services" \
-          -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
-          | jq -r '.[] | select(.service.name=="oc_lettings_site") | .id')
-          echo "SERVICE_ID=$SERVICE_ID" >> $GITHUB_ENV
+          curl https://cli-assets.heroku.com/install.sh | sh
 
-      - name: Update Docker Image in Render Service
+      - name: Set up Heroku authentication using API token
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
         run: |
-          curl -X PATCH "https://api.render.com/v1/services/$SERVICE_ID" \
-          -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
-          -H "Content-Type: application/json" \
-          -d '{
-                "serviceDetails": {
-                  "dockerImage": "'${{ secrets.DOCKER_HUB_USERNAME }}/oc_lettings_site:${{ github.sha }}'"
-                }
-              }'
+          cat > ~/.netrc <<EOF
+          machine api.heroku.com
+            login _
+            password ${{ secrets.HEROKU_API_KEY }}
+          machine git.heroku.com
+            login _
+            password ${{ secrets.HEROKU_API_KEY }}
+          machine registry.heroku.com
+            login _
+            password ${{ secrets.HEROKU_API_KEY }}
+          EOF
+          heroku auth:whoami
 
-      - name: Monitor Deployment
+      - name: Set Heroku stack to container
         run: |
-          until [[ $(curl -s -X GET "https://api.render.com/v1/services" \
-          -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
-          | jq -r --arg SERVICE_ID "$SERVICE_ID" '.[] | select(.id==$SERVICE_ID) | .status') == "live" ]]; do
+          heroku stack:set container --app ${{ vars.HEROKU_APP_NAME }}
+
+      - name: Set Heroku environment variables
+        run: |
+          heroku config:set SECRET_KEY="${{ secrets.SECRET_KEY }}" --app ${{ vars.HEROKU_APP_NAME }}
+
+      - name: Pull Docker image from Docker Hub
+        run: |
+          docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/oc_lettings_site:${{ github.sha }}
+          docker tag ${{ secrets.DOCKER_HUB_USERNAME }}/oc_lettings_site:${{ github.sha }} registry.heroku.com/${{ vars.HEROKU_APP_NAME }}/web
+
+      - name: Log in to Heroku Container Registry
+        run: |
+          echo "${{ secrets.HEROKU_API_KEY }}" | docker login --username=_ --password-stdin registry.heroku.com
+
+      - name: Push Docker image to Heroku Container Registry
+        run: |
+          docker push registry.heroku.com/${{ vars.HEROKU_APP_NAME }}/web
+
+      - name: Release the Heroku app
+        run: |
+          heroku container:release web --app ${{ vars.HEROKU_APP_NAME }}
+
+      - name: Monitor deployment
+        run: |
+          until heroku ps:wait --app ${{ vars.HEROKU_APP_NAME }}; do
             echo "Waiting for deployment..."
             sleep 10
           done
-          echo "Deployment complete"
+          echo "Deployment complete. App is running at https://${{ vars.HEROKU_APP_NAME }}.herokuapp.com"
