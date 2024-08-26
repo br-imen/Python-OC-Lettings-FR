@@ -1,5 +1,11 @@
 import pytest
 from lettings.models import Address
+from django.conf import settings
+
+
+@pytest.fixture(autouse=True)
+def override_settings_for_tests():
+    settings.STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
 
 @pytest.fixture

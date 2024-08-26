@@ -2,6 +2,12 @@
 import pytest
 from django.contrib.auth.models import User
 from profiles.models import Profile
+from django.conf import settings
+
+
+@pytest.fixture(autouse=True)
+def override_settings_for_tests():
+    settings.STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
 
 @pytest.fixture
