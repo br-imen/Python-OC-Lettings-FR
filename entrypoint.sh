@@ -4,7 +4,7 @@
 if [ "$ENVIRONMENT" = "production" ]; then
   echo "Running migrate..."
   python manage.py migrate --noinput
-  echo "Runnisng collecttatic..."
+  echo "Running collecttatic..."
   python manage.py collectstatic --noinput
 fi
 

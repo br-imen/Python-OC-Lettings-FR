@@ -6,5 +6,4 @@ mixer==6.0.0
 black
 sentry-sdk
 python-dotenv
-gunicorn
 whitenoise

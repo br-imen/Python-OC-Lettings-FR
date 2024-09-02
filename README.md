@@ -76,6 +76,83 @@ Utilisation de PowerShell, comme ci-dessus sauf :
 - Pour activer l'environnement virtuel, `.\venv\Scripts\Activate.ps1` 
 - Remplacer `which <my-command>` par `(Get-Command <my-command>).Path`
 
+### Intégration de Sentry
+
+Ce projet est configuré pour utiliser [Sentry](https://sentry.io/) pour le suivi des erreurs et la surveillance des performances. Sentry permet de capturer et de signaler les erreurs en temps réel, ce qui facilite l'identification et la correction des problèmes en production.
+
+#### Configuration de Sentry
+
+Pour configurer Sentry dans ce projet :
+
+1. **Créer un compte Sentry** :
+   - Si vous n'avez pas de compte Sentry, inscrivez-vous sur [sentry.io](https://sentry.io/signup/).
+   - Créez un nouveau projet dans votre tableau de bord Sentry et sélectionnez "Django" comme plateforme.
+
+2. **Installer le SDK Sentry** :
+   - Le SDK Sentry est déjà inclus dans le fichier `requirements.txt`. Si vous devez l'ajouter manuellement, vous pouvez le faire avec la commande suivante :
+     ```bash
+     pip install sentry-sdk
+     ```
+
+3. **Configurer Sentry dans Django** :
+   - Sentry est configuré dans le fichier `settings.py` de votre projet Django. La configuration essentielle ressemble à ceci :
+     ```python
+     import sentry_sdk
+     from sentry_sdk.integrations.django import DjangoIntegration
+
+     sentry_sdk.init(
+         dsn="VOTRE_SENTRY_DSN",  # Remplacez par votre DSN Sentry
+         integrations=[DjangoIntegration()],
+         traces_sample_rate=1.0,  # Ajustez cette valeur selon vos besoins
+         send_default_pii=True  # Cela permet d'envoyer des informations personnellement identifiables
+     )
+     ```
+
+   - Remplacez `VOTRE_SENTRY_DSN` par le DSN (Data Source Name) fourni par Sentry pour votre projet.
+
+4. **Configuration spécifique à l'environnement** :
+   - Il est recommandé d'activer Sentry uniquement dans votre environnement de production. Vous pouvez configurer Sentry en fonction de l'environnement de cette manière :
+     ```python
+     import os
+
+     if os.getenv('ENVIRONMENT') == 'production':
+         sentry_sdk.init(
+             dsn=os.getenv('SENTRY_DSN'),
+             integrations=[DjangoIntegration()],
+             traces_sample_rate=1.0,
+             send_default_pii=True
+         )
+     ```
+
+   - Assurez-vous que la variable d'environnement `SENTRY_DSN` est définie dans votre environnement de production.
+
+5. **Gestion des erreurs personnalisée** :
+   - Sentry peut également être utilisé pour capturer des erreurs ou des avertissements spécifiques dans votre application. Par exemple, vous pouvez capturer une exception manuellement :
+     ```python
+     import sentry_sdk
+
+     try:
+         # Du code qui pourrait lever une exception
+         ...
+     except Exception as e:
+         sentry_sdk.capture_exception(e)
+     ```
+
+6. **Surveillance des performances** :
+   - Sentry peut également surveiller les performances de votre application. L'option `traces_sample_rate` dans la configuration de Sentry contrôle la quantité de données échantillonnées pour la surveillance des performances. Ajustez ce taux selon vos besoins.
+
+#### Vérification de l'intégration
+
+Après la configuration, vous pouvez vérifier que Sentry capture correctement les erreurs :
+
+1. Provoquez une erreur dans votre application (par exemple, une division par zéro délibérée) et vérifiez si elle apparaît dans votre tableau de bord Sentry.
+2. Surveillez le tableau de bord Sentry pour vous assurer que les erreurs et les données de performances sont bien signalées.
+
+#### Ressources supplémentaires
+
+Pour plus d'informations sur la configuration et l'utilisation de Sentry avec Django, consultez la documentation officielle de Sentry : [https://docs.sentry.io/platforms/python/guides/django/](https://docs.sentry.io/platforms/python/guides/django/).
+
+
 ### Déploiement
 
 #### Récapitulatif
