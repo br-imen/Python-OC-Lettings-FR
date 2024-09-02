@@ -3,10 +3,10 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - master
+      - '**'  # This will trigger on any branch
   pull_request:
     branches:
-      - master
+      - '**'  # This will trigger on any branch
 
 jobs:
   test:
@@ -32,7 +32,7 @@ jobs:
       - name: Lint code with flake8
         run: |
           flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=99 --statistics
         env:
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
       
@@ -46,6 +46,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     needs: test
+    if: github.ref == 'refs/heads/master'
     
     steps:
       - name: Checkout code
@@ -57,73 +58,17 @@ jobs:
       - name: Build Docker image
         run: |
           docker build \
-          --build-arg SENTRY_DSN=${{ secrets.SENTRY_DSN }} \
-          --build-arg SECRET_KEY="${{ secrets.SECRET_KEY }}" \
-          --build-arg DEBUG=${{ vars.DEBUG }} \
-          --build-arg ALLOWED_HOSTS=${{ vars.ALLOWED_HOSTS }} \
-          -t ${{ secrets.DOCKER_HUB_USERNAME }}/oc_lettings_site:${{ github.sha }} .
+          -t ${{ secrets.DOCKER_HUB_USERNAME }}/oc_lettings_site:latest .
       
       - name: Push Docker image to Docker Hub
-        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/oc_lettings_site:${{ github.sha }}
+        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/oc_lettings_site:latest
         
   deploy:
     runs-on: ubuntu-latest
     needs: build
+    if: github.ref == 'refs/heads/master'
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Install Heroku CLI
+      - name: deploy to render
         run: |
-          curl https://cli-assets.heroku.com/install.sh | sh
-
-      - name: Set up Heroku authentication using API token
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-        run: |
-          cat > ~/.netrc <<EOF
-          machine api.heroku.com
-            login _
-            password ${{ secrets.HEROKU_API_KEY }}
-          machine git.heroku.com
-            login _
-            password ${{ secrets.HEROKU_API_KEY }}
-          machine registry.heroku.com
-            login _
-            password ${{ secrets.HEROKU_API_KEY }}
-          EOF
-          heroku auth:whoami
-
-      - name: Set Heroku stack to container
-        run: |
-          heroku stack:set container --app ${{ vars.HEROKU_APP_NAME }}
-
-      - name: Set Heroku environment variables
-        run: |
-          heroku config:set SECRET_KEY="${{ secrets.SECRET_KEY }}" --app ${{ vars.HEROKU_APP_NAME }}
-
-      - name: Pull Docker image from Docker Hub
-        run: |
-          docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/oc_lettings_site:${{ github.sha }}
-          docker tag ${{ secrets.DOCKER_HUB_USERNAME }}/oc_lettings_site:${{ github.sha }} registry.heroku.com/${{ vars.HEROKU_APP_NAME }}/web
-
-      - name: Log in to Heroku Container Registry
-        run: |
-          echo "${{ secrets.HEROKU_API_KEY }}" | docker login --username=_ --password-stdin registry.heroku.com
-
-      - name: Push Docker image to Heroku Container Registry
-        run: |
-          docker push registry.heroku.com/${{ vars.HEROKU_APP_NAME }}/web
-
-      - name: Release the Heroku app
-        run: |
-          heroku container:release web --app ${{ vars.HEROKU_APP_NAME }}
-
-      - name: Monitor deployment
-        run: |
-          until heroku ps:wait --app ${{ vars.HEROKU_APP_NAME }}; do
-            echo "Waiting for deployment..."
-            sleep 10
-          done
-          echo "Deployment complete. App is running at https://${{ vars.HEROKU_APP_NAME }}.herokuapp.com"
+          curl "${{ secrets.RENDER_DEPLOY_HOOK_URL }}"

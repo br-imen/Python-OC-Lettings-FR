@@ -17,22 +17,18 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the entire Django project to the container
 COPY . /app/
 
-# Accept build arguments and set them as environment variables
-ARG SENTRY_DSN
-ARG SECRET_KEY
-ARG DEBUG
-ARG ALLOWED_HOSTS
+# Copy the entrypoint script into the container
+COPY entrypoint.sh /app/
 
-ENV SENTRY_DSN=$SENTRY_DSN
-ENV SECRET_KEY=$SECRET_KEY
-ENV DEBUG=$DEBUG
-ENV ALLOWED_HOSTS=$ALLOWED_HOSTS
+# Make the entrypoint script executable
+RUN chmod +x /app/entrypoint.sh
 
-# Collect static files
-RUN python manage.py collectstatic --noinput
+# Set the entrypoint to use the script
+ENTRYPOINT ["/app/entrypoint.sh"]
 
 # Expose port 8000 to the outside world
 EXPOSE 8000
 
 # Command to run the application using Gunicorn
-CMD exec gunicorn --bind "0.0.0.0:$PORT" oc_lettings_site.wsgi:application
+# CMD exec gunicorn --bind "0.0.0.0:8000" oc_lettings_site.wsgi:application
+CMD python manage.py runserver 0.0.0.0:8000
