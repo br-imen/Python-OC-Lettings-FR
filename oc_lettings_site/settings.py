@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 import logging
 
 # Load environment variables from .env file
-load_dotenv()
+load_dotenv(dotenv_path="/etc/secrets/.env")
 
 sentry_sdk.init(
     dsn=os.getenv("SENTRY_DSN"),
