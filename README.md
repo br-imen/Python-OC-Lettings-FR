@@ -75,3 +75,46 @@ Utilisation de PowerShell, comme ci-dessus sauf :
 
 - Pour activer l'environnement virtuel, `.\venv\Scripts\Activate.ps1` 
 - Remplacer `which <my-command>` par `(Get-Command <my-command>).Path`
+
+### Déploiement
+
+#### Récapitulatif
+
+Le processus de déploiement est automatisé via une pipeline CI/CD configurée dans GitHub Actions. Lorsque des modifications sont poussées ou lorsqu'une pull request est fusionnée dans la branche `master`, la pipeline exécute des tests, construit une image Docker, et déploie automatiquement l'application sur un service d'hébergement Render. Cette approche assure une livraison continue, minimisant ainsi les risques d'erreurs manuelles et garantissant que la version la plus récente et stable de l'application est toujours en production.
+
+#### Configuration Requise
+
+Pour que le déploiement fonctionne correctement, les éléments suivants doivent être configurés :
+
+1. **Secrets GitHub** : Les secrets suivants doivent être définis dans les paramètres du dépôt GitHub :
+   - `SECRET_KEY` : Clé secrète utilisée par l'application pour diverses opérations sécurisées.
+   - `DOCKER_HUB_USERNAME` et `DOCKER_HUB_PASSWORD` : Identifiants pour se connecter à Docker Hub.
+   - `RENDER_DEPLOY_HOOK_URL` : URL du webhook de déploiement fourni par Render ou un autre service d'hébergement.
+
+2. **Docker Hub** : Un compte Docker Hub configuré pour stocker l'image Docker de l'application.
+
+3. **Service d'hébergement (ex. Render)** : Un service d'hébergement où l'application sera déployée, avec un webhook de déploiement configuré pour être déclenché automatiquement.
+
+#### Étapes Nécessaires pour le Déploiement
+
+Suivez ces étapes pour assurer un déploiement réussi :
+
+1. **Configurer les Secrets GitHub** : 
+   - Accédez aux paramètres de votre dépôt GitHub, puis allez dans la section "Secrets and variables > Actions secrets".
+   - Ajoutez les secrets `SECRET_KEY`, `DOCKER_HUB_USERNAME`, `DOCKER_HUB_PASSWORD`, et `RENDER_DEPLOY_HOOK_URL` avec leurs valeurs respectives.
+
+2. **Vérifier la Configuration Docker** :
+   - Assurez-vous que le fichier `Dockerfile` à la racine du projet est correctement configuré pour construire l'image Docker de l'application.
+   - Le fichier doit inclure toutes les dépendances et les configurations nécessaires pour que l'application fonctionne correctement dans un environnement conteneurisé.
+
+3. **Déclencher le Déploiement** :
+   - Poussez vos modifications sur la branche `master` ou fusionnez une pull request vers `master`.
+   - La pipeline CI/CD s'exécutera automatiquement :
+     - Les tests seront d'abord lancés pour vérifier l'intégrité du code.
+     - Ensuite, une image Docker sera construite et poussée sur Docker Hub.
+     - Enfin, l'application sera déployée sur Render en utilisant le webhook de déploiement.
+
+4. **Vérifier le Déploiement** :
+   - Accédez à l'URL de votre application sur Render pour vous assurer que le déploiement s'est effectué correctement et que l'application fonctionne comme attendu.
+
+En suivant ces instructions, le successeur pourra déployer l'application de manière fiable et efficace, en garantissant une continuité dans le processus de livraison de la solution.
