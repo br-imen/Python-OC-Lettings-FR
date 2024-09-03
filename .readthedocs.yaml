@@ -19,10 +19,9 @@ python:
     - method: pip
       path: .
 
-# Add any specific settings you need for Django
-django:
-  settings: oc_lettings_site.settings
-  migrate: true
+# Environment variables for Django settings
+env:
+  DJANGO_SETTINGS_MODULE: "oc_lettings_site.settings"
 
 # Remove the build section completely if it's not needed
 # The following section has been removed:
