@@ -1,0 +1,36 @@
+# .readthedocs.yaml
+
+version: 2
+
+# Build documentation in the "docs" directory with Sphinx
+sphinx:
+  configuration: docs/conf.py
+
+# Define the Python version and environment for building the docs
+python:
+  version: 3.8
+  install:
+    - requirements: docs/requirements.txt
+    - method: pip
+      path: .
+
+# Build jobs configuration
+build:
+  image: latest
+
+# Optionally specify the branch to build the documentation from
+# If you want to build from the 'master' branch, uncomment the following lines
+# For GitHub:
+#  branches:
+#    only:
+#      - master
+
+# Add any specific settings you need for Django
+django:
+  settings: oc_lettings_site.settings
+  migrate: true
+
+# Customize the build command if necessary (usually not needed)
+# build:
+#   commands:
+#     - sphinx-build -b html docs/ _build/html
