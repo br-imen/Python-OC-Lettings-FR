@@ -1,0 +1,40 @@
+[project]
+name = "oc_lettings_site"
+version = "0.1.0"
+description = "Site web d'Orange County Lettings"
+authors = [
+    { name = "Imen", email = "imen.benrhouma93@gmail.com" }
+]
+readme = "README.md"
+
+# Runtime dependencies
+dependencies = [
+    "django==3.0",
+    "sentry-sdk",
+    "python-dotenv",
+    "whitenoise"
+]
+
+# Optional dependencies (usually for development and testing)
+[project.optional-dependencies]
+dev = [
+    "flake8==3.7.0",
+    "pytest-django==3.9.0",
+    "pytest-cov",
+    "mixer==6.0.0",
+    "black",
+    "sphinx"
+]
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.flake8]
+max-line-length = 99
+exclude = ["**/migrations/*", "venv"]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "oc_lettings_site.settings"
+python_files = "tests.py"
+addopts = "-v"
