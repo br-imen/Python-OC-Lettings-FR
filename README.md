@@ -138,8 +138,6 @@ Pour configurer Sentry dans ce projet :
          sentry_sdk.capture_exception(e)
      ```
 
-6. **Surveillance des performances** :
-   - Sentry peut également surveiller les performances de votre application. L'option `traces_sample_rate` dans la configuration de Sentry contrôle la quantité de données échantillonnées pour la surveillance des performances. Ajustez ce taux selon vos besoins.
 
 #### Vérification de l'intégration
 
@@ -147,11 +145,6 @@ Après la configuration, vous pouvez vérifier que Sentry capture correctement l
 
 1. Provoquez une erreur dans votre application (par exemple, une division par zéro délibérée) et vérifiez si elle apparaît dans votre tableau de bord Sentry.
 2. Surveillez le tableau de bord Sentry pour vous assurer que les erreurs et les données de performances sont bien signalées.
-
-#### Ressources supplémentaires
-
-Pour plus d'informations sur la configuration et l'utilisation de Sentry avec Django, consultez la documentation officielle de Sentry : [https://docs.sentry.io/platforms/python/guides/django/](https://docs.sentry.io/platforms/python/guides/django/).
-
 
 ### Déploiement
 

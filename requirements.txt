@@ -7,3 +7,4 @@ black
 sentry-sdk
 python-dotenv
 whitenoise
+sphinx
