@@ -41,7 +41,7 @@ Prerequisites
 - GitHub account with read access to the repository.
 - Git CLI.
 - SQLite3 CLI.
-- Python interpreter (version 3.6 or higher).
+- Python interpreter (version 3.7 or higher).
 - Docker.
 
 Setup Steps
