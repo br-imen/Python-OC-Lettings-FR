@@ -19,12 +19,6 @@ python:
     - method: pip
       path: .
 
-# Optionally specify the branch to build the documentation from
-# Uncomment the following lines to build only from 'master' branch
-branches:
-  only:
-    - master
-
 # Add any specific settings you need for Django
 django:
   settings: oc_lettings_site.settings
