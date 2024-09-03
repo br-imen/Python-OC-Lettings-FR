@@ -10,12 +10,14 @@ sphinx:
 build:
   os: ubuntu-22.04
   tools:
-    python:
-      version: 3.11
-      install:
-        - requirements: requirements.txt
-        - method: pip
-          path: .
+    python: "3.11"
+
+# Add the install commands separately
+python:
+  install:
+    - requirements: requirements.txt
+    - method: pip
+      path: .
 
 # Optionally specify the branch to build the documentation from
 # Uncomment the following lines to build only from 'master' branch
