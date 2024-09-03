@@ -8,15 +8,11 @@ sphinx:
 
 # Define the Python version and environment for building the docs
 python:
-  version: 3.8
+  version: 3.11
   install:
     - requirements: docs/requirements.txt
     - method: pip
       path: .
-
-# Build jobs configuration
-build:
-  image: latest
 
 # Optionally specify the branch to build the documentation from
 # If you want to build from the 'master' branch, uncomment the following lines
