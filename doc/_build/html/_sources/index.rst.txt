@@ -20,7 +20,7 @@ Overview
 
 Orange County Lettings is a rapidly expanding startup in the real estate rental sector, aiming to establish a strong presence in the United States.
 
-The project involves developing and enhancing the company's website, focusing on code improvements, deployment strategies, and resolving existing issues.
+The project orange-country-lettings-fr involves developing and enhancing the company's website, focusing on code improvements, deployment strategies, and resolving existing issues.
 
 As part of the team, you are responsible for improving the website's functionality, optimizing the codebase, and ensuring smooth deployment processes.
 
